@@ -50,3 +50,26 @@ if __name__ == '__main__':
       optimizer.zero_grad()
       loss_value.backward()
       optimizer.step()
+
+    model.eval()
+    all_predictions = []
+    all_labels = []
+    for iter, (aug_sgrams, labels) in enumerate(test_dataloader):
+      all_labels.extend(labels)
+      if torch.cuda.is_available():
+        aug_sgrams = aug_sgrams.cuda()
+        labels = labels.cuda()
+
+      with torch.no_grad():
+        predictions = model(aug_sgrams)
+        indeces = torch.argmax(predictions, dim=1)
+        all_predictions.extend(indeces)
+        loss_value = criterion(predictions, labels)
+
+    all_labels = [label.item() for label in all_labels]
+    all_predictions = [prediction.item() for prediction in all_predictions]
+    print("Epoch {}".format(epoch+1))
+    print(classification_report(all_labels, all_predictions))
+    # print(all_labels)
+    # print("-----------------")
+    # print(all_predictions)
