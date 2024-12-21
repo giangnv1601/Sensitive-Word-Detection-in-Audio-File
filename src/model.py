@@ -8,11 +8,11 @@ class AudioCNN (nn.Module):
     self.conv2 = self.make_block(in_channels=8, out_channels=16)
     self.conv3 = self.make_block(in_channels=16, out_channels=32)
     self.conv4 = self.make_block(in_channels=32, out_channels=64)
-    self.conv5 = self.make_block(in_channels=64, out_channels=128)
+    self.conv5 = self.make_block(in_channels=32, out_channels=32)
 
     self.fc1 = nn.Sequential(
       nn.Dropout(p=0.5),
-      nn.Linear(in_features=1024, out_features=521),
+      nn.Linear(in_features=512, out_features=521),
       nn.LeakyReLU()
     )
 
@@ -42,7 +42,7 @@ class AudioCNN (nn.Module):
     x = self.conv1(x)
     x = self.conv2(x)
     x = self.conv3(x)
-    # x = self.conv4(x)
+    x = self.conv4(x)
     # x = self.conv5(x)
     x = x.view(x.shape[0], -1)
     x = self.fc1(x)

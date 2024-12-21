@@ -3,36 +3,50 @@ from dataset import SoundDS
 from model import AudioCNN
 from torch.utils.data import DataLoader
 import torch.nn as nn
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, accuracy_score
+
+from argparse import ArgumentParser
+from tqdm.autonotebook import tqdm
+from torch.utils.tensorboard import SummaryWriter
+
+def get_args():
+  parser = ArgumentParser(description="CNN Training")
+  parser.add_argument("--root", "-r", type=str, default="D:/projects/project3/data", help="Root of the dataset")
+  parser.add_argument("--epochs", "-e", type=int, default=100, help="Number of epochs")
+  parser.add_argument("--batch_size", "-b", type=int, default=8, help="Batch size")
+  parser.add_argument("--logging", "-l", type=str, default="tensorboard")
+  args = parser.parse_args()
+  return args
 
 if __name__ == '__main__':
-  num_epochs = 100
-  data_path = "D:/projects/project3/data"
-  train_dataset = SoundDS(data_path=data_path, dataset_type="train")
+  args = get_args()
+  train_dataset = SoundDS(data_path=args.root, dataset_type="train")
   train_dataloader = DataLoader(
     dataset=train_dataset,
-    batch_size=64,
+    batch_size=args.batch_size,
     shuffle=True,
     num_workers=4,
     drop_last=True
   )
-  test_dataset = SoundDS(data_path=data_path, dataset_type="test")
+  test_dataset = SoundDS(data_path=args.root, dataset_type="test")
   test_dataloader = DataLoader(
     dataset=test_dataset,
-    batch_size=64,
+    batch_size=args.batch_size,
     shuffle=False,
     num_workers=4,
     drop_last=False
   )
+  writer = SummaryWriter(args.logging)
   model = AudioCNN(num_classes=35)
   criterion = nn.CrossEntropyLoss()
   optimizer = torch.optim.SGD(model.parameters(), lr=1e-3, momentum=0.9)
   num_iters = len(train_dataloader)
   if torch.cuda.is_available():
     model.cuda()
-  for epoch in range(num_epochs):
+  for epoch in range(args.epochs):
     model.train()
-    for iter, (aug_sgrams, labels) in enumerate(train_dataloader):
+    progress_bar = tqdm(train_dataloader, colour="cyan")
+    for iter, (aug_sgrams, labels) in enumerate(progress_bar):
       if torch.all(aug_sgrams == 0):
         continue
       
@@ -43,8 +57,9 @@ if __name__ == '__main__':
       # forward
       outputs = model(aug_sgrams)
       loss_value = criterion(outputs, labels)
-      if (iter + 1) % 10 == 0:
-        print("Epoch {}/{}. Iteration {}/{}. Loss {:.3f}".format(epoch+1, num_epochs, iter+1, num_iters, loss_value))
+      
+      progress_bar.set_description("Epoch {}/{}. Iteration {}/{}. Loss {:.3f}".format(epoch+1, args.epochs, iter+1, num_iters, loss_value))
+      writer.add_scalar("Train/Loss", loss_value, epoch*num_iters+iter)
 
       # backward
       optimizer.zero_grad()
@@ -68,8 +83,11 @@ if __name__ == '__main__':
 
     all_labels = [label.item() for label in all_labels]
     all_predictions = [prediction.item() for prediction in all_predictions]
-    print("Epoch {}".format(epoch+1))
-    print(classification_report(all_labels, all_predictions))
+    accuracy = accuracy_score(all_labels, all_predictions)
+    print("Epoch {}: Accuracy: {}".format(epoch+1, accuracy))
+    writer.add_scalar("Val/Accuracy", loss_value, epoch)
+
+    # print(classification_report(all_labels, all_predictions))
     # print(all_labels)
     # print("-----------------")
     # print(all_predictions)
