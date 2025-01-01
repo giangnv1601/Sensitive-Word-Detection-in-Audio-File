@@ -26,14 +26,6 @@ def get_args():
   return args
 
 def plot_confusion_matrix(writer, cm, class_names, epoch):
-  """
-  Returns a matplotlib figure containing the plotted confusion matrix.
-
-  Args:
-      cm (array, shape = [n, n]): a confusion matrix of integer classes
-      class_names (array, shape = [n]): String names of the integer classes
-  """
-
   figure = plt.figure(figsize=(20, 20))
   # color map: https://matplotlib.org/stable/gallery/color/colormap_reference.html
   plt.imshow(cm, interpolation='nearest', cmap="ocean")
@@ -77,8 +69,8 @@ if __name__ == '__main__':
     num_workers=4,
     drop_last=False
   )
-  if os.path.isdir(args.logging):
-    shutil.rmtree(args.logging)
+  # if os.path.isdir(args.logging):
+  #   shutil.rmtree(args.logging)
   if not os.path.isdir(args.trained_models):
     os.mkdir(args.trained_models)
   writer = SummaryWriter(args.logging)
@@ -146,7 +138,7 @@ if __name__ == '__main__':
     plot_confusion_matrix(writer, confusion_matrix(all_labels, all_predictions), class_names=test_dataset.categories, epoch=epoch)
     accuracy = accuracy_score(all_labels, all_predictions)
     print("Epoch {}: Accuracy: {}".format(epoch+1, accuracy))
-    writer.add_scalar("Val/Accuracy", accuracy, epoch)
+    writer.add_scalar("Val/Accuracy", accuracy, epoch+1)
 
     # print(classification_report(all_labels, all_predictions))
     # print(all_labels)
