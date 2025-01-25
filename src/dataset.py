@@ -39,7 +39,7 @@ class SoundDS(Dataset):
     with open(list_file_path, "r") as f:
       lines = f.readlines()
       for line in lines:
-        relative_path = line.strip()  
+        relative_path = line.strip() # Loại bỏ khoảng trắng dư thừa ở đầu và cuối dòng
         full_path = os.path.join(self.data_path, relative_path) 
         self.audios_path.append(full_path)
 
@@ -84,7 +84,7 @@ if __name__ == '__main__':
   # In các mục trong data_path
   print(dataset.data_path)
 
-  # Tính số loại nhãn kahcs nhau
+  # Tính số loại nhãn khác nhau
   unique_labels = set(dataset.labels)
   print(len(unique_labels))
 
