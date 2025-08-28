@@ -1,7 +1,8 @@
 # Sensitive-Word-Detection-in-Audio-File
 ## In this thesis, we focus on researching and applying convolutional neural networks to the problem of detecting sensitive words in audio files. The goal of this study is to develop an automated system capable of efficiently and accurately detecting sensitive words in audio content. This system will support media platforms and online services in monitoring and managing content, contributing to creating a safe and healthy environment for users.
 ### 📊 Dataset
-- We use the Speech Commands v2 dataset from Google, containing 35 keywords.
+We use the **[official Speech Commands v2 dataset](https://arxiv.org/abs/1804.03209)**, which contains 35 keywords.
+
 - Each audio file is 1 second long at 16kHz.
 
 | Label      | Backward | Bed  | Bird  | Cat   | Dog  | Down | Eight | Five  | Forward  | For  | Go    | Happy | House | Learn | Left  | Marvin | Sheila | Six   | Stop  | Three | Tree  | Two   | Up    | Visual | Off    | On    | Right | Seven | Zero  | No    | One   | Yes    | Follow | Nine  | Wow   | Silence |
@@ -74,7 +75,13 @@ Output: **class probabilities**
   <img src="imgs/visua_test.png" alt="Visualization" width="800"/>
 </p>
 
-## To clearly understand my learning process, you can visit the `docs` folder.
+### 🛠️ Development Directions of the Project
+1. Collect a more diverse training dataset, especially including Vietnamese speech data.
+2. Explore new ways of organizing training data, such as using longer phrases instead of single words, to reduce data collection, processing, and labeling time.
+3. Improve the model architecture to learn higher-level features.
+4. Investigate other deep neural networks, such as Siamese Neural Networks (SNN), or fine-tune existing models.
+
+## => To clearly understand my learning process, you can visit the `docs` folder.
 
 
 
