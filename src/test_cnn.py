@@ -8,7 +8,7 @@ from preprocessing import AudioUtil
 
 def get_args():
   parser = ArgumentParser(description="CNN inference")
-  parser.add_argument("--audio_file", "-a", type=str, default="D:/projects/project3/data/four/638685f2_nohash_0.wav")
+  parser.add_argument("--audio_file", "-a", type=str, default="D:/projects/project3/data/four/3c4aa5ef_nohash_0.wav")
   parser.add_argument("--checkpoint", "-c", type=str, default="trained_models/best_cnn.pt")
   args = parser.parse_args()
   return args
